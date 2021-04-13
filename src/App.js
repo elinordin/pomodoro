@@ -5,7 +5,7 @@ import Form from './components/form.jsx'
 function App() {
   const [timer, setTimer] = useState({ minutes: '0', seconds: '10' })
   const [isTimerRunning, setIsTimerRunning] = useState(false)
-  const [timeLeft, setTimeLeft] = ({ minutes: '', seconds: '' })
+  const [timeLeft, setTimeLeft] = useState({})
 
   const changeMinutes = (e) => { setTimer({ ...timer, minutes: e.target.value }) }
   const changeSeconds = (e) => { setTimer({ ...timer, seconds: e.target.value }) }
