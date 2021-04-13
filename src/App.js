@@ -9,7 +9,7 @@ import music from './assets/classical.mp3';
 function App() {
   const [timer, setTimer] = useState({ minutes: '0', seconds: '10' })
   const [isTimerRunning, setIsTimerRunning] = useState(false)
-  const [play, {stop}] = useSound(music);
+  const [play, {stop}] = useSound(music, { loop: true });
 
   const changeMinutes = (e) => { setTimer({ ...timer, minutes: e.target.value }) }
   const changeSeconds = (e) => { setTimer({ ...timer, seconds: e.target.value }) }
