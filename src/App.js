@@ -20,14 +20,13 @@ function App() {
     let countDownDate = new Date()
     countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(timer.minutes))
     countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(timer.seconds))
-    setTimer({ ...timer , seconds: timer.seconds - 1 })
 
     const timerInterval = setInterval(() => {
       let now = new Date()
 
       let diff = countDownDate - now;
       let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
       setTimer({ minutes: minutesLeft, seconds: secondsLeft })
 
       if (diff < 0) {
