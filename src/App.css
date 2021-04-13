@@ -26,6 +26,7 @@
 .label-input-wrapper {
   display:flex;
   flex-direction: column;
+  font-size: xx-large;
 }
 
 label {
