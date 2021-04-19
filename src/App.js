@@ -7,14 +7,20 @@ import useSound from 'use-sound';
 import music from './assets/classical.mp3';
 
 function App() {
-  const [timer, setTimer] = useState({ minutes: '0', seconds: '20' })
-  const [studyTime, setStudyTime] = useState({ minutes: '0', seconds: '20' })
-  const [breakTime, setBreakTime] = useState({ minutes: '0', seconds: '10' })
+  const [studyTime, setStudyTime] = useState({ minutes: '0', seconds: '6' })
+  const [breakTime, setBreakTime] = useState({ minutes: '0', seconds: '3' })
+  const [timer, setTimer] = useState(studyTime)
   const [isTimerRunning, setIsTimerRunning] = useState(false)
   const [play, {stop}] = useSound(music, { loop: true });
 
-  const changeStudyMinutes = (e) => { setStudyTime({ ...studyTime, minutes: e.target.value }) }
-  const changeStudySeconds = (e) => { setStudyTime({ ...studyTime, seconds: e.target.value }) }
+  const changeStudyMinutes = (e) => { 
+    setStudyTime({ ...studyTime, minutes: e.target.value }) 
+    setTimer({ ...studyTime, minutes: e.target.value }) 
+  }
+  const changeStudySeconds = (e) => { 
+    setStudyTime({ ...studyTime, seconds: e.target.value }) 
+    setTimer({ ...studyTime, seconds: e.target.value })
+  }
   const changeBreakMinutes = (e) => { setBreakTime({ ...breakTime, minutes: e.target.value }) }
   const changeBreakSeconds = (e) => { setBreakTime({ ...breakTime, seconds: e.target.value }) }
 
@@ -38,9 +44,10 @@ function App() {
         let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
         setTimer({ minutes: minutesLeft, seconds: secondsLeft })
   
-        if (diff <= 0) {
+        if (diff < 0) {
           stop()
           clearInterval(studyInterval);
+          setTimer(breakTime)
           breakCountdown()
         }
   
@@ -60,8 +67,9 @@ function App() {
         let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
         setTimer({ minutes: minutesLeft, seconds: secondsLeft })
   
-        if (diff <= 0) {
+        if (diff < 0) {
           clearInterval(breakInterval);
+          setTimer(studyTime)
           studyCountdown()
         }
   
