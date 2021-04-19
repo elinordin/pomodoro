@@ -27,7 +27,38 @@ function App() {
 
   const startCountDown = () => {
     setIsTimerRunning(true)
-    studyCountdown()
+    do {
+      const countDownDate = getCountDownDate()
+      countdown(countDownDate)
+    }
+    while (isTimerRunning)
+  }
+
+  const getCountDownDate = () => {
+    let countDownDate = new Date()
+    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(todo === 'Study'? studyTime.minutes : breakTime.minutes)))
+    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(todo === 'Study'? studyTime.seconds : breakTime.seconds)))
+    return countDownDate
+  }
+
+  const countdown = (countDownDate) => {
+    todo === 'Study'? play() : stop()
+
+      const interval = setInterval(() => {
+        let now = new Date()
+  
+        let diff = countDownDate - now;
+        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+  
+        if (diff < 0) {
+          clearInterval(interval);
+          setTimer(todo === 'Study'? breakTime : studyTime)
+          setTodo(todo === 'Study'? 'Break' : 'Study')
+          return
+        }
+      }, 100);
   }
 
   const studyCountdown = () => {
