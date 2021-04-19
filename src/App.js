@@ -7,37 +7,67 @@ import useSound from 'use-sound';
 import music from './assets/classical.mp3';
 
 function App() {
-  const [timer, setTimer] = useState({ minutes: '0', seconds: '10' })
+  const [timer, setTimer] = useState({ minutes: '0', seconds: '20' })
+  const [studyTime, setStudyTime] = useState({ minutes: '0', seconds: '20' })
+  const [breakTime, setBreakTime] = useState({ minutes: '0', seconds: '10' })
   const [isTimerRunning, setIsTimerRunning] = useState(false)
   const [play, {stop}] = useSound(music, { loop: true });
 
-  const changeMinutes = (e) => { setTimer({ ...timer, minutes: e.target.value }) }
-  const changeSeconds = (e) => { setTimer({ ...timer, seconds: e.target.value }) }
+  const changeStudyMinutes = (e) => { setStudyTime({ ...studyTime, minutes: e.target.value }) }
+  const changeStudySeconds = (e) => { setStudyTime({ ...studyTime, seconds: e.target.value }) }
+  const changeBreakMinutes = (e) => { setBreakTime({ ...breakTime, minutes: e.target.value }) }
+  const changeBreakSeconds = (e) => { setBreakTime({ ...breakTime, seconds: e.target.value }) }
 
   const startCountDown = () => {
-    play()
     setIsTimerRunning(true)
-    let countDownDate = new Date()
-    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(timer.minutes))
-    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(timer.seconds))
 
-    const timerInterval = setInterval(() => {
-      let now = new Date()
-
-      let diff = countDownDate - now;
-      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-
-      if (diff < 0) {
-        stop()
-        clearInterval(timerInterval);
-        setTimer({minutes: '0', seconds: '10'})
-        setIsTimerRunning(false)
-      }
-
-    }, 100);
+    studyCountdown()
   }
+
+  const studyCountdown = () => {
+    play()
+    let countDownDate = new Date()
+    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(studyTime.minutes)))
+    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(studyTime.seconds)))
+
+      const studyInterval = setInterval(() => {
+        let now = new Date()
+  
+        let diff = countDownDate - now;
+        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+  
+        if (diff <= 0) {
+          stop()
+          clearInterval(studyInterval);
+          breakCountdown()
+        }
+  
+      }, 1000);
+  }
+
+  const breakCountdown = () => {
+    let countDownDate = new Date()
+    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(breakTime.minutes)))
+    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(breakTime.seconds)))
+
+      const breakInterval = setInterval(() => {
+        let now = new Date()
+  
+        let diff = countDownDate - now;
+        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+  
+        if (diff <= 0) {
+          clearInterval(breakInterval);
+          studyCountdown()
+        }
+  
+      }, 1000);
+  }
+
 
 
   return (
@@ -46,7 +76,14 @@ function App() {
         {isTimerRunning ?
           <Countdown timeLeft={timer} />
           :
-          <Form timer={timer} changeMinutes={changeMinutes} changeSeconds={changeSeconds} startCountDown={startCountDown} />
+          <Form 
+            studyTime={studyTime} 
+            changeStudyMinutes={changeStudyMinutes} 
+            changeStudySeconds={changeStudySeconds} 
+            breakTime={breakTime} 
+            changeBreakMinutes={changeBreakMinutes} 
+            changeBreakSeconds={changeBreakSeconds} 
+            startCountDown={startCountDown} />
         }
       </main>
     </div>
