@@ -2,12 +2,9 @@ import React from 'react';
 
 function Countdown(props) {
     return (
-        <div>
-            <div className='input-row'>
-            <p className='label-input-wrapper'>{props.timeLeft.minutes}</p>
-            <p className='colon'>:</p>
-            <p className='label-input-wrapper'>{props.timeLeft.seconds}</p>
-          </div>
+        <div className='countdown'>
+            <h1>Work</h1>
+            <p>{props.timeLeft.minutes < 10 && '0'}{props.timeLeft.minutes} : {props.timeLeft.seconds < 10 && '0'}{props.timeLeft.seconds}</p>
         </div>
     );
 }

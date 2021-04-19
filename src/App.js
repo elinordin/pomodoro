@@ -36,20 +36,19 @@ function App() {
         setIsTimerRunning(false)
       }
 
-    }, 1000);
+    }, 100);
   }
 
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Pomodoro timer</h1>
+      <main className="App-header">
         {isTimerRunning ?
           <Countdown timeLeft={timer} />
           :
           <Form timer={timer} changeMinutes={changeMinutes} changeSeconds={changeSeconds} startCountDown={startCountDown} />
         }
-      </header>
+      </main>
     </div>
   );
 }
