@@ -28,7 +28,7 @@ function Form(props) {
               <input type='number' name='seconds' min='0' max='99' defaultValue={props.breakTime.seconds} onChange={(e) => props.changeBreakSeconds(e)}/>
             </div>
           </div>
-          <button type='button' className='timer-button' onClick={props.startCountDown}>Start</button>
+          <button type='button' className='timer-button' onClick={props.startClock}>Start</button>
         </form>
     );
 }

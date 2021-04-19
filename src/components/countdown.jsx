@@ -1,10 +1,13 @@
 import React from 'react';
+import {msToHuman} from '../Utils'
 
-function Countdown(props) {
+function Countdown({clock}) {
+    const {currentTime, onABreak} = clock
+
     return (
         <div className='countdown'>
-            <h1>{props.todo}</h1>
-            <p>{props.timeLeft.minutes < 10 && '0'}{props.timeLeft.minutes} : {props.timeLeft.seconds < 10 && '0'}{props.timeLeft.seconds}</p>
+            <h1>{onABreak ? 'Break time': 'Study time'}</h1>
+            <p>{msToHuman(currentTime)}</p>
         </div>
     );
 }
