@@ -10,6 +10,7 @@ function App() {
   const [studyTime, setStudyTime] = useState({ minutes: '0', seconds: '6' })
   const [breakTime, setBreakTime] = useState({ minutes: '0', seconds: '3' })
   const [timer, setTimer] = useState(studyTime)
+  const [todo, setTodo] = useState('Study')
   const [isTimerRunning, setIsTimerRunning] = useState(false)
   const [play, {stop}] = useSound(music, { loop: true });
 
@@ -26,7 +27,6 @@ function App() {
 
   const startCountDown = () => {
     setIsTimerRunning(true)
-
     studyCountdown()
   }
 
@@ -48,6 +48,7 @@ function App() {
           stop()
           clearInterval(studyInterval);
           setTimer(breakTime)
+          setTodo('Break')
           breakCountdown()
         }
   
@@ -70,6 +71,7 @@ function App() {
         if (diff < 0) {
           clearInterval(breakInterval);
           setTimer(studyTime)
+          setTodo('Study')
           studyCountdown()
         }
   
@@ -82,7 +84,7 @@ function App() {
     <div className="App">
       <main className="App-header">
         {isTimerRunning ?
-          <Countdown timeLeft={timer} />
+          <Countdown timeLeft={timer} todo={todo} />
           :
           <Form 
             studyTime={studyTime} 
