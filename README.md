@@ -8,7 +8,7 @@ Create an accessible Pomodoro timer that counts down from 25 minutes and that yo
 
 
 ### :hourglass: Time spent:
-1.5 days.
+3 days.
 
 
 ### :checkered_flag: Goals:
@@ -22,8 +22,11 @@ I decided to create a very basic pomodoro timer. I wanted it to loop some music 
 ### :closed_book: Learnings:
 
 * Working with the Date object in JavaScript which I have never done before
-* More practice with React and hooks
 * Time is valuable, and I can decide how to use my time more efficiently
+* Refactoring and bug-solving and the insight that I sometimes get a bit narrowminded. Sometimes it takes less time to take a new approach to the whole code than solving that one little bug
+* Code effiency
+* More understanding of the useEffect hook
+* I need to get better at taking breaks before getting frustrated and hitting the 'I'm the most stupid person ever'-mode
 
 
 ### :computer: Tech used in this specific repository:
