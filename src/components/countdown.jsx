@@ -1,10 +1,13 @@
 import React from 'react';
+import {millisToReadable} from './millisConverter.js'
 
 function Countdown(props) {
+    const {onBreak, countdownTime} = props.timer
+
     return (
         <div className='countdown'>
-            <h1>{props.todo}</h1>
-            <p>{props.timeLeft.minutes < 10 && '0'}{props.timeLeft.minutes} : {props.timeLeft.seconds < 10 && '0'}{props.timeLeft.seconds}</p>
+            <h1>{onBreak? 'Break' : 'Study'}</h1>
+            <p>{millisToReadable(countdownTime)}</p>
         </div>
     );
 }

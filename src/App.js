@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Countdown from './components/countdown.jsx'
 import Form from './components/form.jsx'
@@ -7,125 +7,42 @@ import useSound from 'use-sound';
 import music from './assets/classical.mp3';
 
 function App() {
-  const [studyTime, setStudyTime] = useState({ minutes: '0', seconds: '6' })
-  const [breakTime, setBreakTime] = useState({ minutes: '0', seconds: '3' })
-  const [timer, setTimer] = useState(studyTime)
-  const [todo, setTodo] = useState('Study')
-  const [isTimerRunning, setIsTimerRunning] = useState(false)
+  const [timer, setTimer] = useState({
+    studyTime: 6000,
+    breakTime: 3000,
+    countdownTime: 6000,
+    onBreak: false,
+    isRunning: false
+  })
   const [play, { stop }] = useSound(music, { loop: true });
-
-  let countDownDate = new Date()
-
-  const changeStudyMinutes = (e) => {
-    setStudyTime({ ...studyTime, minutes: e.target.value })
-    setTimer({ ...studyTime, minutes: e.target.value })
-  }
-  const changeStudySeconds = (e) => {
-    setStudyTime({ ...studyTime, seconds: e.target.value })
-    setTimer({ ...studyTime, seconds: e.target.value })
-  }
-  const changeBreakMinutes = (e) => { setBreakTime({ ...breakTime, minutes: e.target.value }) }
-  const changeBreakSeconds = (e) => { setBreakTime({ ...breakTime, seconds: e.target.value }) }
-
-  const startCountDown = () => {
-    setIsTimerRunning(true)
-    //todo === 'Study'? play() : stop()
-    getCountDownDate()
-    countdown()
-  }
-
-  const getCountDownDate = () => {
-    countDownDate = new Date()
-    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(todo === 'Study' ? studyTime.minutes : breakTime.minutes)))
-    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(todo === 'Study' ? studyTime.seconds : breakTime.seconds)))
-  }
   
-  const countdown = () => {
-    const interval = setInterval(() => {
-      let now = new Date()
 
-      let diff = countDownDate - now;
-      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+  useEffect(() => {
+    if(timer.isRunning) {
+      setInterval(() => {
+        setTimer({...timer, countdownTime: timer.countdownTime - 1000})
 
-      if (diff < 0) {
-        //clearInterval(interval);
-        setTimer(todo === 'Study'? breakTime : studyTime)
-        console.log(todo)
-        setTodo(todo === 'Study'? 'Break' : 'Study')
-        console.log(todo)
-        startCountDown()
-      }
+        if (timer.countdownTime <= 0 && timer.onBreak) {
+          setTimer({...timer, countdownTime: timer.studyTime, onBreak: false})
+          return
+        }
 
-    }, 100);
-  }
+        if (timer.countdownTime <= 0 && !timer.onBreak) {
+          setTimer({...timer, countdownTime: timer.breakTime, onBreak: true})
+          return
+        }
 
-
-  const studyCountdown = () => {
-    play()
-    let countDownDate = new Date()
-    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(studyTime.minutes)))
-    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(studyTime.seconds)))
-
-    const studyInterval = setInterval(() => {
-      let now = new Date()
-
-      let diff = countDownDate - now;
-      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-
-      if (diff < 0) {
-        stop()
-        clearInterval(studyInterval);
-        setTimer(breakTime)
-        setTodo('Break')
-        breakCountdown()
-      }
-
-    }, 1000);
-  }
-
-  const breakCountdown = () => {
-    let countDownDate = new Date()
-    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(breakTime.minutes)))
-    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(breakTime.seconds)))
-
-    const breakInterval = setInterval(() => {
-      let now = new Date()
-
-      let diff = countDownDate - now;
-      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-
-      if (diff < 0) {
-        clearInterval(breakInterval);
-        setTimer(studyTime)
-        setTodo('Study')
-        studyCountdown()
-      }
-
-    }, 1000);
-  }
-
-
+      }, 1000)
+    }
+  })
 
   return (
     <div className="App">
       <main className="App-header">
-        {isTimerRunning ?
-          <Countdown timeLeft={timer} todo={todo} />
+        {timer.isRunning ?
+          <Countdown timer={timer} />
           :
-          <Form
-            studyTime={studyTime}
-            changeStudyMinutes={changeStudyMinutes}
-            changeStudySeconds={changeStudySeconds}
-            breakTime={breakTime}
-            changeBreakMinutes={changeBreakMinutes}
-            changeBreakSeconds={changeBreakSeconds}
-            startCountDown={startCountDown} />
+          <Form timer={timer} setTimer={setTimer}/>
         }
       </main>
     </div>
