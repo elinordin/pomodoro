@@ -15,26 +15,32 @@ function App() {
     isRunning: false
   })
   const [play, { stop }] = useSound(music, { loop: true });
-  
 
   useEffect(() => {
+    if (timer.isRunning && !timer.onBreak) {play()} 
+    else {stop()}
+  }, [timer.isRunning, timer.onBreak])
+
+  //If isRunning or countdownTime changes, setTimeout for 1 second and toggle break/study on 0
+  useEffect(() => {
+
     if(timer.isRunning) {
-      setInterval(() => {
-        setTimer({...timer, countdownTime: timer.countdownTime - 1000})
+      setTimeout(() => {
 
         if (timer.countdownTime <= 0 && timer.onBreak) {
           setTimer({...timer, countdownTime: timer.studyTime, onBreak: false})
           return
         }
-
         if (timer.countdownTime <= 0 && !timer.onBreak) {
           setTimer({...timer, countdownTime: timer.breakTime, onBreak: true})
           return
         }
 
+        setTimer({...timer, countdownTime: timer.countdownTime - 1000})
       }, 1000)
-    }
-  })
+    } 
+
+  }, [timer.isRunning, timer.countdownTime])
 
   return (
     <div className="App">
