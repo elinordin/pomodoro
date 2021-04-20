@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Countdown from './components/countdown.jsx'
 import Form from './components/form.jsx'
@@ -12,14 +12,16 @@ function App() {
   const [timer, setTimer] = useState(studyTime)
   const [todo, setTodo] = useState('Study')
   const [isTimerRunning, setIsTimerRunning] = useState(false)
-  const [play, {stop}] = useSound(music, { loop: true });
+  const [play, { stop }] = useSound(music, { loop: true });
 
-  const changeStudyMinutes = (e) => { 
-    setStudyTime({ ...studyTime, minutes: e.target.value }) 
-    setTimer({ ...studyTime, minutes: e.target.value }) 
+  let countDownDate = new Date()
+
+  const changeStudyMinutes = (e) => {
+    setStudyTime({ ...studyTime, minutes: e.target.value })
+    setTimer({ ...studyTime, minutes: e.target.value })
   }
-  const changeStudySeconds = (e) => { 
-    setStudyTime({ ...studyTime, seconds: e.target.value }) 
+  const changeStudySeconds = (e) => {
+    setStudyTime({ ...studyTime, seconds: e.target.value })
     setTimer({ ...studyTime, seconds: e.target.value })
   }
   const changeBreakMinutes = (e) => { setBreakTime({ ...breakTime, minutes: e.target.value }) }
@@ -27,39 +29,38 @@ function App() {
 
   const startCountDown = () => {
     setIsTimerRunning(true)
-    do {
-      const countDownDate = getCountDownDate()
-      countdown(countDownDate)
-    }
-    while (isTimerRunning)
+    //todo === 'Study'? play() : stop()
+    getCountDownDate()
+    countdown()
   }
 
   const getCountDownDate = () => {
-    let countDownDate = new Date()
-    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(todo === 'Study'? studyTime.minutes : breakTime.minutes)))
-    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(todo === 'Study'? studyTime.seconds : breakTime.seconds)))
-    return countDownDate
+    countDownDate = new Date()
+    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(todo === 'Study' ? studyTime.minutes : breakTime.minutes)))
+    countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(todo === 'Study' ? studyTime.seconds : breakTime.seconds)))
+  }
+  
+  const countdown = () => {
+    const interval = setInterval(() => {
+      let now = new Date()
+
+      let diff = countDownDate - now;
+      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+
+      if (diff < 0) {
+        //clearInterval(interval);
+        setTimer(todo === 'Study'? breakTime : studyTime)
+        console.log(todo)
+        setTodo(todo === 'Study'? 'Break' : 'Study')
+        console.log(todo)
+        startCountDown()
+      }
+
+    }, 100);
   }
 
-  const countdown = (countDownDate) => {
-    todo === 'Study'? play() : stop()
-
-      const interval = setInterval(() => {
-        let now = new Date()
-  
-        let diff = countDownDate - now;
-        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-  
-        if (diff < 0) {
-          clearInterval(interval);
-          setTimer(todo === 'Study'? breakTime : studyTime)
-          setTodo(todo === 'Study'? 'Break' : 'Study')
-          return
-        }
-      }, 100);
-  }
 
   const studyCountdown = () => {
     play()
@@ -67,23 +68,23 @@ function App() {
     countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(studyTime.minutes)))
     countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(studyTime.seconds)))
 
-      const studyInterval = setInterval(() => {
-        let now = new Date()
-  
-        let diff = countDownDate - now;
-        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-  
-        if (diff < 0) {
-          stop()
-          clearInterval(studyInterval);
-          setTimer(breakTime)
-          setTodo('Break')
-          breakCountdown()
-        }
-  
-      }, 1000);
+    const studyInterval = setInterval(() => {
+      let now = new Date()
+
+      let diff = countDownDate - now;
+      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+
+      if (diff < 0) {
+        stop()
+        clearInterval(studyInterval);
+        setTimer(breakTime)
+        setTodo('Break')
+        breakCountdown()
+      }
+
+    }, 1000);
   }
 
   const breakCountdown = () => {
@@ -91,22 +92,22 @@ function App() {
     countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(parseInt(breakTime.minutes)))
     countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(parseInt(breakTime.seconds)))
 
-      const breakInterval = setInterval(() => {
-        let now = new Date()
-  
-        let diff = countDownDate - now;
-        let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
-        setTimer({ minutes: minutesLeft, seconds: secondsLeft })
-  
-        if (diff < 0) {
-          clearInterval(breakInterval);
-          setTimer(studyTime)
-          setTodo('Study')
-          studyCountdown()
-        }
-  
-      }, 1000);
+    const breakInterval = setInterval(() => {
+      let now = new Date()
+
+      let diff = countDownDate - now;
+      let minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      let secondsLeft = Math.floor(((diff % (1000 * 60)) / 1000) + 1);
+      setTimer({ minutes: minutesLeft, seconds: secondsLeft })
+
+      if (diff < 0) {
+        clearInterval(breakInterval);
+        setTimer(studyTime)
+        setTodo('Study')
+        studyCountdown()
+      }
+
+    }, 1000);
   }
 
 
@@ -117,13 +118,13 @@ function App() {
         {isTimerRunning ?
           <Countdown timeLeft={timer} todo={todo} />
           :
-          <Form 
-            studyTime={studyTime} 
-            changeStudyMinutes={changeStudyMinutes} 
-            changeStudySeconds={changeStudySeconds} 
-            breakTime={breakTime} 
-            changeBreakMinutes={changeBreakMinutes} 
-            changeBreakSeconds={changeBreakSeconds} 
+          <Form
+            studyTime={studyTime}
+            changeStudyMinutes={changeStudyMinutes}
+            changeStudySeconds={changeStudySeconds}
+            breakTime={breakTime}
+            changeBreakMinutes={changeBreakMinutes}
+            changeBreakSeconds={changeBreakSeconds}
             startCountDown={startCountDown} />
         }
       </main>
